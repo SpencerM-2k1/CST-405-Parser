@@ -19,7 +19,9 @@ void addSymbol(SymbolTable* table, char* name, char* type) {
     if (!newSymbol) return;
 
     newSymbol->name = strdup(name);
-    newSymbol->type = strdup(type);
+    // newSymbol->type = strdup(type);
+    newSymbol->type = stringToType(type);
+
     // Initialize other fields of Symbol
 
     unsigned int hashval = hash(table, name);
@@ -68,7 +70,7 @@ void freeSymbol(Symbol* symbol)
         freeSymbol(symbol->next);
     }
     free(symbol->name);
-    free(symbol->type);
+    // free(symbol->type);
     free(symbol);
 }
 
@@ -92,27 +94,62 @@ void printSymbolTable(SymbolTable* table)
         Symbol* currSymbol = table->table[i];
         while(currSymbol != NULL)
         {
-            printf("    %s %s\n", currSymbol->type, currSymbol->name);
+            printf("    %s %s\n", typeToString(currSymbol->type), currSymbol->name);
             currSymbol = currSymbol->next;
         }
     }
 }
 
-int main(int argc, char **argv) {
-    printf("Starting!\n");
-    SymbolTable* testTable = createSymbolTable(3);
-    addSymbol(testTable, "x", "int");
-    addSymbol(testTable, "mode", "char");
-    addSymbol(testTable, "operator", "char");
-    addSymbol(testTable, "str", "string");
-    addSymbol(testTable, "index", "int");
-    printSymbolTable(testTable);
-    
-    Symbol* querySymbol = lookupSymbol(testTable, "mode");
-    if (querySymbol)
-    {
-        printf("%s is of type %s\n", querySymbol->name, querySymbol->type);
-    }
-    freeSymbolTable(testTable);
 
+SymbolType stringToType(char* typeString)
+{
+    if (strcmp(typeString, "int") == 0)
+    {
+        return SymbolType_Int;
+    }
+    else if (strcmp(typeString, "char") == 0)
+    {
+        return SymbolType_Char;
+    }
+    else //Type unknown
+    {
+        return SymbolType_Undefined;
+    }
 }
+
+char* typeToString(SymbolType type)
+{
+    char* typeString;
+    switch (type)
+    {
+        case (SymbolType_Int):
+            typeString = "int";
+            break;
+        case (SymbolType_Char):
+            typeString = "char";
+            break;
+        default:
+            typeString = "undefined";
+            break;
+    }
+    return typeString;
+}
+
+// int main(int argc, char **argv) {
+//     printf("Starting!\n");
+//     SymbolTable* testTable = createSymbolTable(3);
+//     addSymbol(testTable, "x", "int");
+//     addSymbol(testTable, "mode", "char");
+//     addSymbol(testTable, "operator", "char");
+//     addSymbol(testTable, "str", "string"); //type "string" is not defined in language
+//     addSymbol(testTable, "index", "int");
+//     printSymbolTable(testTable);
+    
+//     Symbol* querySymbol = lookupSymbol(testTable, "mode");
+//     if (querySymbol)
+//     {
+//         printf("%s is of type %s\n", querySymbol->name, typeToString(querySymbol->type));
+//     }
+//     freeSymbolTable(testTable);
+
+// }

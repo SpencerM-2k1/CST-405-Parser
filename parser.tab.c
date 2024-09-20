@@ -74,6 +74,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "AST1.h"
+#include "SymbolTable1.h"
 
 extern int yylex();
 extern int yyparse();
@@ -85,7 +86,7 @@ void yyerror(const char* s);
 
 ASTNode* root = NULL; 
 
-#line 89 "parser.tab.c"
+#line 90 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -518,8 +519,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    70,    70,    80,    81,    92,    99,   103,   104,   113,
-     122,   125,   141,   142,   151,   160
+       0,    71,    71,    81,    82,    93,   101,   105,   106,   115,
+     124,   127,   143,   144,   153,   162
 };
 #endif
 
@@ -707,9 +708,9 @@ yy_symbol_value_print (FILE *yyo,
   switch (yykind)
     {
     case YYSYMBOL_ID: /* ID  */
-#line 63 "parser.y"
+#line 64 "parser.y"
          { fprintf(yyoutput, "%s", ((*yyvaluep).string)); }
-#line 713 "parser.tab.c"
+#line 714 "parser.tab.c"
         break;
 
       default:
@@ -1097,7 +1098,7 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* Program: VarDeclList StmtList  */
-#line 70 "parser.y"
+#line 71 "parser.y"
                                 { printf("The PARSER has started\n"); 
 									root = malloc(sizeof(ASTNode));
 									root->type = NodeType_Program;
@@ -1105,17 +1106,17 @@ yyreduce:
 									root->program.stmtList = (yyvsp[0].ast);
 									// Set other fields as necessary
 								}
-#line 1109 "parser.tab.c"
+#line 1110 "parser.tab.c"
     break;
 
   case 3: /* VarDeclList: %empty  */
-#line 80 "parser.y"
+#line 81 "parser.y"
               {/*empty, i.e. it is possible not to declare a variable*/}
-#line 1115 "parser.tab.c"
+#line 1116 "parser.tab.c"
     break;
 
   case 4: /* VarDeclList: VarDecl VarDeclList  */
-#line 81 "parser.y"
+#line 82 "parser.y"
                                 {  	printf("PARSER: Recognized variable declaration list\n"); 
 								(yyval.ast) = malloc(sizeof(ASTNode));
 								(yyval.ast)->type = NodeType_VarDeclList;
@@ -1125,37 +1126,38 @@ yyreduce:
 								// Set other fields as necessary
 							
 							}
-#line 1129 "parser.tab.c"
+#line 1130 "parser.tab.c"
     break;
 
   case 5: /* VarDecl: TYPE ID SEMICOLON  */
-#line 92 "parser.y"
-                           { printf("PARSER: Recognized variable declaration: %s\n", (yyvsp[-1].string));
+#line 93 "parser.y"
+                                { printf("PARSER: Recognized variable declaration: %s\n", (yyvsp[-1].string));
 							    (yyval.ast) = malloc(sizeof(ASTNode));
     							(yyval.ast)->type = NodeType_VarDecl;
     							(yyval.ast)->varDecl.varType = strdup((yyvsp[-2].string));
     							(yyval.ast)->varDecl.varName = strdup((yyvsp[-1].string));
     							// Set other fields as necessary
-							 }
-#line 1141 "parser.tab.c"
+								// addSymbol(symbolTable, $$->varDecl.varName, $$->varDecl.varType);
+							}
+#line 1143 "parser.tab.c"
     break;
 
   case 6: /* VarDecl: TYPE ID  */
-#line 99 "parser.y"
+#line 101 "parser.y"
                           {
                   printf ("Missing semicolon after declaring variable: %s\n", (yyvsp[0].string));
              }
-#line 1149 "parser.tab.c"
+#line 1151 "parser.tab.c"
     break;
 
   case 7: /* StmtList: %empty  */
-#line 103 "parser.y"
+#line 105 "parser.y"
            {/*empty, i.e. it is possible not to have any statement*/}
-#line 1155 "parser.tab.c"
+#line 1157 "parser.tab.c"
     break;
 
   case 8: /* StmtList: Stmt StmtList  */
-#line 104 "parser.y"
+#line 106 "parser.y"
                         { printf("PARSER: Recognized statement list\n");
 						(yyval.ast) = malloc(sizeof(ASTNode));
 						(yyval.ast)->type = NodeType_StmtList;
@@ -1163,11 +1165,11 @@ yyreduce:
 						(yyval.ast)->stmtList.stmtList = (yyvsp[0].ast);
 						// Set other fields as necessary
 					}
-#line 1167 "parser.tab.c"
+#line 1169 "parser.tab.c"
     break;
 
   case 9: /* Stmt: ID ASSIGN Expr SEMICOLON  */
-#line 113 "parser.y"
+#line 115 "parser.y"
                                { /* code TBD */
 								printf("PARSER: Recognized assignment statement\n");
 								(yyval.ast) = malloc(sizeof(ASTNode));
@@ -1177,17 +1179,17 @@ yyreduce:
 								(yyval.ast)->stmt.expr = (yyvsp[-1].ast);
 								// Set other fields as necessary
  }
-#line 1181 "parser.tab.c"
+#line 1183 "parser.tab.c"
     break;
 
   case 10: /* Stmt: WRITE ID SEMICOLON  */
-#line 122 "parser.y"
+#line 124 "parser.y"
                              { printf("PARSER: Recognized write statement\n"); }
-#line 1187 "parser.tab.c"
+#line 1189 "parser.tab.c"
     break;
 
   case 11: /* Expr: ID BinOp ID  */
-#line 125 "parser.y"
+#line 127 "parser.y"
                   { 
 						printf("PARSER: Recognized binary operation\n");
 						/**/
@@ -1204,17 +1206,17 @@ yyreduce:
 						/**/
 						// Set other fields as necessary
  					}
-#line 1208 "parser.tab.c"
+#line 1210 "parser.tab.c"
     break;
 
   case 12: /* Expr: ID  */
-#line 141 "parser.y"
+#line 143 "parser.y"
              { printf("ASSIGNMENT statement \n"); }
-#line 1214 "parser.tab.c"
+#line 1216 "parser.tab.c"
     break;
 
   case 13: /* Expr: NUMBER  */
-#line 142 "parser.y"
+#line 144 "parser.y"
                  { 
 				printf("PARSER: Recognized number\n");
 				(yyval.ast) = malloc(sizeof(ASTNode));
@@ -1222,11 +1224,11 @@ yyreduce:
 				(yyval.ast)->simpleExpr.number = (yyvsp[0].number);
 				// Set other fields as necessary
 			 }
-#line 1226 "parser.tab.c"
+#line 1228 "parser.tab.c"
     break;
 
   case 14: /* BinOp: PLUS  */
-#line 151 "parser.y"
+#line 153 "parser.y"
             { 
 				// printf("PARSER: Recognized addition statement\n");
 				// $$ = malloc(sizeof(ASTNode));
@@ -1235,11 +1237,11 @@ yyreduce:
     			// Set other fields as necessary
 				printf("PARSER: Recognized PLUS\n");
 			}
-#line 1239 "parser.tab.c"
+#line 1241 "parser.tab.c"
     break;
 
   case 15: /* BinOp: MINUS  */
-#line 160 "parser.y"
+#line 162 "parser.y"
                { 
 				// printf("PARSER: Recognized addition statement\n");
 				// $$ = malloc(sizeof(ASTNode));
@@ -1248,11 +1250,11 @@ yyreduce:
     			// Set other fields as necessary
 				printf("PARSER: Recognized MINUS\n");
 			}
-#line 1252 "parser.tab.c"
+#line 1254 "parser.tab.c"
     break;
 
 
-#line 1256 "parser.tab.c"
+#line 1258 "parser.tab.c"
 
       default: break;
     }
@@ -1445,14 +1447,16 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 170 "parser.y"
+#line 172 "parser.y"
 
+SymbolTable* symbolTable; 
 
 int main() {
     // Initialize file or input source
     yyin = fopen("testProg.cmm", "r");
 
-    // Start parsing
+    // Start parsingSymbolTable
+	symbolTable = malloc(sizeof(SymbolTable));
     if (yyparse() == 0) {
         // Successfully parsed
 		/* printf("Parsing successful!\n"); */
@@ -1463,7 +1467,7 @@ int main() {
     } else {
         fprintf(stderr, "Parsing failed\n");
     }
-
+	free(symbolTable);
     fclose(yyin);
     return 0;
 }

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "AST1.h"
+#include "SymbolTable1.h"
 
 extern int yylex();
 extern int yyparse();
@@ -89,13 +90,14 @@ VarDeclList:  {/*empty, i.e. it is possible not to declare a variable*/}
 							}
 ;
 
-VarDecl: TYPE ID SEMICOLON { printf("PARSER: Recognized variable declaration: %s\n", $2);
+VarDecl: TYPE ID SEMICOLON 	{ printf("PARSER: Recognized variable declaration: %s\n", $2);
 							    $$ = malloc(sizeof(ASTNode));
     							$$->type = NodeType_VarDecl;
     							$$->varDecl.varType = strdup($1);
     							$$->varDecl.varName = strdup($2);
     							// Set other fields as necessary
-							 }
+								// addSymbol(symbolTable, $$->varDecl.varName, $$->varDecl.varType);
+							}
 		| TYPE ID {
                   printf ("Missing semicolon after declaring variable: %s\n", $2);
              }
@@ -168,12 +170,14 @@ BinOp: PLUS {
 ;
 
 %%
+SymbolTable* symbolTable; 
 
 int main() {
     // Initialize file or input source
     yyin = fopen("testProg.cmm", "r");
 
-    // Start parsing
+    // Start parsingSymbolTable
+	symbolTable = malloc(sizeof(SymbolTable));
     if (yyparse() == 0) {
         // Successfully parsed
 		/* printf("Parsing successful!\n"); */
@@ -184,7 +188,7 @@ int main() {
     } else {
         fprintf(stderr, "Parsing failed\n");
     }
-
+	free(symbolTable);
     fclose(yyin);
     return 0;
 }

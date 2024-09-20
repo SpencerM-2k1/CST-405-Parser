@@ -7,12 +7,25 @@
 
 // Symbol structure
 
+//Enum for var type
+typedef enum {
+    SymbolType_Int,
+    SymbolType_Char,
+    SymbolType_Undefined
+}SymbolType;
+
 // Define the Symbol struct
 typedef struct Symbol {
     char* name;
-    char* type;
+    // char* type;
+    SymbolType type;
     struct Symbol* next;
+
     // Add other fields of Symbol (handle via union)
+    union {
+        int intVal;
+        char charVal;
+    };
 } Symbol;
 
 // Define the SymbolTable struct
@@ -29,5 +42,8 @@ void freeSymbolTable(SymbolTable* table);
 void freeSymbol(Symbol* symbol);
 void printSymbolTable(SymbolTable* table);
 unsigned int hash(SymbolTable* table, char* name);
+
+SymbolType stringToType(char* typeString);
+char* typeToString(SymbolType type);
 
 #endif // SYMBOL_TABL1_H
